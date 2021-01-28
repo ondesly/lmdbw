@@ -1,0 +1,22 @@
+#
+#  CMakeLists.txt
+#  lmdbw
+#
+#  Created by Dmitrii Torkhov <dmitriitorkhov@gmail.com> on 28.01.2021.
+#  Copyright © 2021 Dmitrii Torkhov. All rights reserved.
+#
+
+project(tests)
+
+# TestCRUD
+
+add_executable(test_crud test_crud.cpp)
+
+set_target_properties(test_crud PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO)
+
+target_link_libraries(test_crud lm::dbw)
+
+add_test(NAME TestCRUD COMMAND test_crud)
