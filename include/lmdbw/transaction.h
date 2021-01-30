@@ -11,16 +11,9 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "lmdbw/val.h"
+
 struct MDB_txn;
-
-namespace lm {
-
-    struct val {
-        const uint8_t *data;
-        size_t size;
-    };
-
-}
 
 namespace lm {
 

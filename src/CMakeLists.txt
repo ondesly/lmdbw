@@ -30,7 +30,8 @@ set_target_properties(lmdbw PROPERTIES
 set(PUBLIC_HEADERS
         ../include/lmdbw/db.h
         ../include/lmdbw/exception.h
-        ../include/lmdbw/transaction.h)
+        ../include/lmdbw/transaction.h
+        ../include/lmdbw/val.h)
 
 install(TARGETS lmdbw lmdb
         EXPORT lmdbw-config
