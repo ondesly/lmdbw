@@ -28,8 +28,11 @@ set_target_properties(lmdbw PROPERTIES
 #
 
 set(PUBLIC_HEADERS
+        ../include/lmdbw/column.h
         ../include/lmdbw/db.h
+        ../include/lmdbw/dbw.h
         ../include/lmdbw/exception.h
+        ../include/lmdbw/serializer.h
         ../include/lmdbw/transaction.h
         ../include/lmdbw/val.h)
 
