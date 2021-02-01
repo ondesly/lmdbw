@@ -8,8 +8,31 @@
 
 #pragma once
 
+#include <string>
+
 #include "lmdbw/column.h"
 #include "lmdbw/val.h"
+
+namespace lm {
+
+    template<class T>
+    class serializer;
+
+}
+
+namespace {
+
+    template<class T>
+    lm::val encode(const T &value, lm::serializer<T> &ser);
+
+    lm::val encode(const std::string &value, lm::serializer<std::string> &ser);
+
+    template<class T>
+    T decode(const lm::val &data, lm::serializer<T> &ser);
+
+    std::string decode(const lm::val &data, lm::serializer<std::string> &ser);
+
+}
 
 namespace lm {
 
@@ -26,6 +49,10 @@ namespace lm {
     public:
 
         lm::val encode(const T &value) {
+            return ::encode(value, *this);
+        }
+
+        lm::val encode_struct(const T &value) {
             m_size = get_size(value);
             m_buffer = new uint8_t[m_size];
 
@@ -53,7 +80,15 @@ namespace lm {
             return {m_buffer, m_size};
         }
 
+        lm::val encode_string(const std::string &value) {
+            return {reinterpret_cast<const uint8_t *>(value.data()), value.size()};
+        }
+
         T decode(const lm::val &data) {
+            return ::decode(data, *this);
+        }
+
+        T decode_struct(const lm::val &data) {
             if (!data.data) {
                 return {};
             }
@@ -82,6 +117,10 @@ namespace lm {
             }
 
             return value;
+        }
+
+        std::string decode_string(const lm::val &data) {
+            return {data.data, data.data + data.size};
         }
 
     private:
@@ -149,5 +188,27 @@ namespace lm {
         }
 
     };
+
+}
+
+namespace {
+
+    template<class T>
+    lm::val encode(const T &value, lm::serializer<T> &ser) {
+        return ser.encode_struct(value);
+    }
+
+    lm::val encode(const std::string &value, lm::serializer<std::string> &ser) {
+        return ser.encode_string(value);
+    }
+
+    template<class T>
+    T decode(const lm::val &data, lm::serializer<T> &ser) {
+        return ser.decode_struct(data);
+    }
+
+    std::string decode(const lm::val &data, lm::serializer<std::string> &ser) {
+        return ser.decode_string(data);
+    }
 
 }

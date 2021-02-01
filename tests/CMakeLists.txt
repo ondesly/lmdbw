@@ -33,3 +33,16 @@ set_target_properties(test_struct PROPERTIES
 target_link_libraries(test_struct lm::dbw)
 
 add_test(NAME TestStruct COMMAND test_struct)
+
+# TestString
+
+add_executable(test_string test_string.cpp)
+
+set_target_properties(test_string PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO)
+
+target_link_libraries(test_string lm::dbw)
+
+add_test(NAME TestString COMMAND test_string)
