@@ -28,26 +28,29 @@ namespace lm {
     public:
 
         void put(const K &key, const V &value) {
-            const val k = {reinterpret_cast<const uint8_t *>(&key), sizeof(K)};
-            const val v = serializer<V>{m_columns}.encode(value);
+            serializer<V> ser{m_columns};
 
-            lm::transaction transaction(*m_db);
+            const val k = {reinterpret_cast<const uint8_t *>(&key), sizeof(K)};
+            const val v = ser.encode(value);
+
+            transaction transaction{*m_db};
             transaction.put(k, v);
         }
 
         V get(K key) {
+            transaction transaction(*m_db);
+
             const val k = {reinterpret_cast<const uint8_t *>(&key), sizeof(K)};
+            const val v = transaction.get(k);
 
-            lm::transaction transaction(*m_db);
-            const auto v = transaction.get(k);
-
-            return serializer<V>{m_columns}.decode(v);
+            serializer<V> ser{m_columns};
+            return ser.decode(v);
         }
 
         void del(K key) {
             const val k = {reinterpret_cast<const uint8_t *>(&key), sizeof(K)};
 
-            lm::transaction transaction(*m_db);
+            transaction transaction(*m_db);
             transaction.del(k);
         }
 
