@@ -6,7 +6,6 @@
 //  Copyright © 2021 Dmitrii Torkhov. All rights reserved.
 //
 
-#include <iostream>
 #include <vector>
 
 #include <lmdbw/dbw.h>
