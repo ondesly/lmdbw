@@ -46,8 +46,8 @@ size_t lm::transaction::get_count() {
 }
 
 void lm::transaction::put(const lm::val &key, const lm::val &value, uint32_t flags) {
-    MDB_val mdb_key{key.size, const_cast<void *>(static_cast<const void *>(key.data))};
-    MDB_val mdb_value{value.size, const_cast<void *>(static_cast<const void *>(value.data))};
+    auto mdb_key = lm::to<MDB_val>(key);
+    auto mdb_value = lm::to<MDB_val>(value);
 
     if (const auto rc = mdb_put(m_transaction, m_db.get_dbi(), &mdb_key, &mdb_value, flags)) {
         mdb_txn_abort(m_transaction);
@@ -57,8 +57,8 @@ void lm::transaction::put(const lm::val &key, const lm::val &value, uint32_t fla
 }
 
 lm::val lm::transaction::get(const lm::val &key) {
-    MDB_val mdb_key{key.size, const_cast<void *>(static_cast<const void *>(key.data))};
-    MDB_val mdb_value{};
+    auto mdb_key = lm::to<MDB_val>(key);
+    MDB_val mdb_value;
 
     if (const auto rc = mdb_get(m_transaction, m_db.get_dbi(), &mdb_key, &mdb_value)) {
         if (rc != MDB_NOTFOUND) {
@@ -68,11 +68,11 @@ lm::val lm::transaction::get(const lm::val &key) {
         }
     }
 
-    return {static_cast<uint8_t *>(mdb_value.mv_data), mdb_value.mv_size};
+    return lm::to_val(mdb_value);
 }
 
 void lm::transaction::del(const lm::val &key) {
-    MDB_val mdb_key{key.size, const_cast<void *>(static_cast<const void *>(key.data))};
+    auto mdb_key = lm::to<MDB_val>(key);
 
     if (const auto rc = mdb_del(m_transaction, m_db.get_dbi(), &mdb_key, nullptr)) {
         if (rc != MDB_NOTFOUND) {
