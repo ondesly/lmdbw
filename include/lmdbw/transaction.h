@@ -13,6 +13,7 @@
 
 #include "lmdbw/val.h"
 
+typedef unsigned int MDB_dbi;
 struct MDB_txn;
 
 namespace lm {
@@ -63,7 +64,7 @@ namespace lm {
     private:
 
         const db &m_db;
-        MDB_txn *m_txn;
+        MDB_txn *m_transaction;
         uint32_t m_flags;
 
     };

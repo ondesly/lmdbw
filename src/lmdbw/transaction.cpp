@@ -13,17 +13,17 @@
 #include "lmdbw/transaction.h"
 
 lm::transaction::transaction(const lm::db &db, uint32_t flags) : m_db(db), m_flags(flags) {
-    if (const auto rc = mdb_txn_begin(m_db.get_env(), nullptr, m_flags, &m_txn)) {
+    if (const auto rc = mdb_txn_begin(m_db.get_env(), nullptr, m_flags, &m_transaction)) {
         throw lm::exception{"transaction::mdb_txn_begin", rc};
     }
 }
 
 lm::transaction::~transaction() {
-    if (m_txn) {
+    if (m_transaction) {
         if (m_flags & flag::transaction::rd_only) {
-            mdb_txn_abort(m_txn);
+            mdb_txn_abort(m_transaction);
         } else {
-            mdb_txn_commit(m_txn);
+            mdb_txn_commit(m_transaction);
         }
     }
 }
@@ -33,12 +33,12 @@ MDB_dbi lm::transaction::get_dbi() const {
 }
 
 MDB_txn *lm::transaction::get_transaction() const {
-    return m_txn;
+    return m_transaction;
 }
 
 size_t lm::transaction::get_count() {
     MDB_stat stat;
-    if (const int rc = mdb_stat(m_txn, m_db.get_dbi(), &stat)) {
+    if (const int rc = mdb_stat(m_transaction, m_db.get_dbi(), &stat)) {
         throw lm::exception{"transaction::mdb_stat", rc};
     }
 
@@ -49,9 +49,9 @@ void lm::transaction::put(const lm::val &key, const lm::val &value, uint32_t fla
     MDB_val mdb_key{key.size, const_cast<void *>(static_cast<const void *>(key.data))};
     MDB_val mdb_value{value.size, const_cast<void *>(static_cast<const void *>(value.data))};
 
-    if (const auto rc = mdb_put(m_txn, m_db.get_dbi(), &mdb_key, &mdb_value, flags)) {
-        mdb_txn_abort(m_txn);
-        m_txn = nullptr;
+    if (const auto rc = mdb_put(m_transaction, m_db.get_dbi(), &mdb_key, &mdb_value, flags)) {
+        mdb_txn_abort(m_transaction);
+        m_transaction = nullptr;
         throw lm::exception{"transaction::mdb_put", rc};
     }
 }
@@ -60,7 +60,7 @@ lm::val lm::transaction::get(const lm::val &key) {
     MDB_val mdb_key{key.size, const_cast<void *>(static_cast<const void *>(key.data))};
     MDB_val mdb_value{};
 
-    if (const auto rc = mdb_get(m_txn, m_db.get_dbi(), &mdb_key, &mdb_value)) {
+    if (const auto rc = mdb_get(m_transaction, m_db.get_dbi(), &mdb_key, &mdb_value)) {
         if (rc != MDB_NOTFOUND) {
             throw lm::exception{"transaction::mdb_get", rc};
         } else {
@@ -74,7 +74,7 @@ lm::val lm::transaction::get(const lm::val &key) {
 void lm::transaction::del(const lm::val &key) {
     MDB_val mdb_key{key.size, const_cast<void *>(static_cast<const void *>(key.data))};
 
-    if (const auto rc = mdb_del(m_txn, m_db.get_dbi(), &mdb_key, nullptr)) {
+    if (const auto rc = mdb_del(m_transaction, m_db.get_dbi(), &mdb_key, nullptr)) {
         if (rc != MDB_NOTFOUND) {
             throw lm::exception{"transaction::mdb_del", rc};
         }
