@@ -55,8 +55,8 @@ namespace lm {
         void put(const K &key, const V &value) {
             serializer<V> ser{m_columns};
 
-            const val k = encode_key(key);
-            const val v = ser.encode(value);
+            const auto k = encode_key(key);
+            const auto v = ser.encode(value);
 
             transaction transaction{*m_db};
             transaction.put(k, v);
@@ -75,17 +75,17 @@ namespace lm {
         }
 
         V get(const K &key) {
-            transaction transaction(*m_db);
+            transaction transaction{*m_db, flag::transaction::rd_only};
 
-            const val k = encode_key(key);
-            const val v = transaction.get(k);
+            const auto k = encode_key(key);
+            const auto v = transaction.get(k);
 
             serializer<V> ser{m_columns};
             return ser.decode(v);
         }
 
         std::unordered_map<K, V> get(const K &begin, const K &end) {
-            transaction transaction{*m_db};
+            transaction transaction{*m_db, flag::transaction::rd_only};
             cursor cursor{transaction, encode_key(begin), encode_key(end)};
             serializer<V> ser{m_columns};
 
@@ -101,9 +101,9 @@ namespace lm {
         }
 
         void del(const K &key) {
-            const val k = encode_key(key);
+            const auto k = encode_key(key);
 
-            transaction transaction(*m_db);
+            transaction transaction{*m_db};
             transaction.del(k);
         }
 
