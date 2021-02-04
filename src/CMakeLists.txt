@@ -9,6 +9,7 @@
 find_package(LMDB REQUIRED)
 
 add_library(lmdbw STATIC
+        lmdbw/cursor.cpp
         lmdbw/db.cpp
         lmdbw/transaction.cpp)
 
@@ -29,6 +30,7 @@ set_target_properties(lmdbw PROPERTIES
 
 set(PUBLIC_HEADERS
         ../include/lmdbw/column.h
+        ../include/lmdbw/cursor.h
         ../include/lmdbw/db.h
         ../include/lmdbw/dbw.h
         ../include/lmdbw/exception.h

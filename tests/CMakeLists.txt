@@ -46,3 +46,16 @@ set_target_properties(test_string PROPERTIES
 target_link_libraries(test_string lm::dbw)
 
 add_test(NAME TestString COMMAND test_string)
+
+# TestMultiple
+
+add_executable(test_multiple test_multiple.cpp)
+
+set_target_properties(test_multiple PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO)
+
+target_link_libraries(test_multiple lm::dbw)
+
+add_test(NAME TestMultiple COMMAND test_multiple)

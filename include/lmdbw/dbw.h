@@ -8,7 +8,10 @@
 
 #pragma once
 
+#include <unordered_map>
+
 #include "lmdbw/column.h"
+#include "lmdbw/cursor.h"
 #include "lmdbw/db.h"
 #include "lmdbw/serializer.h"
 #include "lmdbw/transaction.h"
@@ -20,8 +23,17 @@ namespace {
         return {reinterpret_cast<const uint8_t *>(&key), sizeof(K)};
     }
 
+    template<class K>
+    K decode_key(const lm::val &key) {
+        return *reinterpret_cast<const K *>(key.data);
+    }
+
     lm::val encode_key(const std::string &key) {
         return {reinterpret_cast<const uint8_t *>(key.data()), key.size()};
+    }
+
+    std::string decode_key(const lm::val &key) {
+        return {key.data, key.data + key.size};
     }
 
 }
@@ -50,7 +62,19 @@ namespace lm {
             transaction.put(k, v);
         }
 
-        V get(K key) {
+        void put(const std::unordered_map<K, V> &values) {
+            transaction transaction{*m_db};
+            serializer<V> ser{m_columns};
+
+            for (const auto &[key, value] : values) {
+                const auto k = encode_key(key);
+                const auto v = ser.encode(value);
+
+                transaction.put(k, v);
+            }
+        }
+
+        V get(const K &key) {
             transaction transaction(*m_db);
 
             const val k = encode_key(key);
@@ -60,7 +84,23 @@ namespace lm {
             return ser.decode(v);
         }
 
-        void del(K key) {
+        std::unordered_map<K, V> get(const K &begin, const K &end) {
+            transaction transaction{*m_db};
+            cursor cursor{transaction, encode_key(begin), encode_key(end)};
+            serializer<V> ser{m_columns};
+
+            std::unordered_map<K, V> values;
+            for (const auto &[key, value] : cursor) {
+                const auto k = decode_key<K>(key);
+                const auto v = ser.decode(value);
+
+                values.emplace(k, v);
+            }
+
+            return values;
+        }
+
+        void del(const K &key) {
             const val k = encode_key(key);
 
             transaction transaction(*m_db);

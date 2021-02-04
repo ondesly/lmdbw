@@ -48,6 +48,10 @@ namespace lm {
 
     public:
 
+        MDB_dbi get_dbi() const;
+
+        MDB_txn *get_transaction() const;
+
         void put(const val &key, const val &value, uint32_t flags = 0);
 
         val get(const val &key);

@@ -28,6 +28,14 @@ lm::transaction::~transaction() {
     }
 }
 
+MDB_dbi lm::transaction::get_dbi() const {
+    return m_db.get_dbi();
+}
+
+MDB_txn *lm::transaction::get_transaction() const {
+    return m_txn;
+}
+
 void lm::transaction::put(const lm::val &key, const lm::val &value, uint32_t flags) {
     MDB_val mdb_key{key.size, const_cast<void *>(static_cast<const void *>(key.data))};
     MDB_val mdb_value{value.size, const_cast<void *>(static_cast<const void *>(value.data))};
