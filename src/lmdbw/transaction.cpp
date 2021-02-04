@@ -36,6 +36,15 @@ MDB_txn *lm::transaction::get_transaction() const {
     return m_txn;
 }
 
+size_t lm::transaction::get_count() {
+    MDB_stat stat;
+    if (const int rc = mdb_stat(m_txn, m_db.get_dbi(), &stat)) {
+        throw lm::exception{"transaction::mdb_stat", rc};
+    }
+
+    return stat.ms_entries;
+}
+
 void lm::transaction::put(const lm::val &key, const lm::val &value, uint32_t flags) {
     MDB_val mdb_key{key.size, const_cast<void *>(static_cast<const void *>(key.data))};
     MDB_val mdb_value{value.size, const_cast<void *>(static_cast<const void *>(value.data))};

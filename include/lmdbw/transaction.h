@@ -52,6 +52,8 @@ namespace lm {
 
         MDB_txn *get_transaction() const;
 
+        size_t get_count();
+
         void put(const val &key, const val &value, uint32_t flags = 0);
 
         val get(const val &key);
