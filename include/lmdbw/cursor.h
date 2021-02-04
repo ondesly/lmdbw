@@ -47,7 +47,7 @@ namespace lm {
         private:
 
             lm::cursor &m_cursor;
-            lm::val m_key{};
+            const lm::val &m_key;
 
         };
 
@@ -69,13 +69,13 @@ namespace lm {
         MDB_cursor *m_cursor{};
 
         std::pair<lm::val, lm::val> m_current;
-
-        lm::val m_begin_key;
         lm::val m_end_key;
 
     private:
 
-        void set_cursor(int option, const lm::val &key = {});
+        void set(int option, const lm::val &key = {});
+
+        lm::val specify_end_key(const lm::val &end);
 
     };
 

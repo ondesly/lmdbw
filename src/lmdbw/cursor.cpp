@@ -6,6 +6,8 @@
 //  Copyright © 2021 Dmitrii Torkhov. All rights reserved.
 //
 
+#include <algorithm>
+
 #include <liblmdb/lmdb.h>
 
 #include "lmdbw/cursor.h"
@@ -13,35 +15,47 @@
 #include "lmdbw/transaction.h"
 
 lm::cursor::cursor(const lm::transaction &transaction, const lm::val &begin, const lm::val &end)
-        : m_transaction(transaction), m_begin_key(begin), m_end_key(end) {
+        : m_transaction(transaction) {
     if (const auto rc = mdb_cursor_open(transaction.get_transaction(), transaction.get_dbi(), &m_cursor)) {
         throw lm::exception{"cursor::mdb_cursor_open", rc};
     }
 
     //
 
-    set_cursor(MDB_SET_RANGE, end);
-    set_cursor(MDB_NEXT);
-    m_end_key = m_current.first;
+    m_end_key = specify_end_key(end);
 
-    set_cursor(MDB_SET_RANGE, begin);
-    m_begin_key = m_current.first;
+    set(MDB_SET_RANGE, begin);
+}
+
+lm::val lm::cursor::specify_end_key(const lm::val &end) {
+    set(MDB_SET_RANGE, end);
+
+    auto current_key = to<MDB_val>(m_current.first);
+    auto end_key = to<MDB_val>(end);
+
+    if (mdb_cmp(m_transaction.get_transaction(), m_transaction.get_dbi(), &current_key, &end_key) == 0) {
+        set(MDB_NEXT);
+    }
+
+    return val::copy(m_current.first);
 }
 
 lm::cursor::~cursor() {
+    delete[] m_end_key.data;
+
     mdb_cursor_close(m_cursor);
 }
 
 lm::cursor::iterator lm::cursor::begin() {
-    return {*this, m_begin_key};
+    return {*this, m_current.first};
 }
 
 lm::cursor::iterator lm::cursor::end() {
     return {*this, m_end_key};
 }
 
-void lm::cursor::set_cursor(int option, const lm::val &key) {
-    MDB_val mdb_key{key.size, const_cast<void *>(static_cast<const void *>(key.data))};
+void lm::cursor::set(int option, const lm::val &key) {
+    auto mdb_key = to<MDB_val>(key);
     MDB_val mdb_data;
 
     if (const int rc = mdb_cursor_get(m_cursor, &mdb_key, &mdb_data, MDB_cursor_op(option))) {
@@ -51,29 +65,26 @@ void lm::cursor::set_cursor(int option, const lm::val &key) {
             m_current = {};
         }
     } else {
-        m_current = {{static_cast<uint8_t *>(mdb_key.mv_data),  mdb_key.mv_size},
-                     {static_cast<uint8_t *>(mdb_data.mv_data), mdb_data.mv_size}};
+        m_current = {to_val(mdb_key), to_val(mdb_data)};
     }
 }
 
 // -- iterator --
 
-lm::cursor::iterator::iterator(lm::cursor &cursor, const lm::val &key)
-        : m_cursor(cursor), m_key(key) {}
+lm::cursor::iterator::iterator(lm::cursor &cursor, const lm::val &key) : m_cursor(cursor), m_key(key) {}
 
 lm::cursor::iterator::reference lm::cursor::iterator::operator*() const {
     return m_cursor.m_current;
 }
 
 lm::cursor::iterator &lm::cursor::iterator::operator++() {
-    m_cursor.set_cursor(MDB_NEXT);
-    m_key = m_cursor.m_current.first;
+    m_cursor.set(MDB_NEXT);
 
     return *this;
 }
 
 bool lm::cursor::iterator::operator==(const lm::cursor::iterator &other) const {
-    return m_key.data == other.m_key.data;
+    return std::equal(m_key.data, m_key.data + m_key.size, other.m_key.data);
 }
 
 bool lm::cursor::iterator::operator!=(const lm::cursor::iterator &other) const {
