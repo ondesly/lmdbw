@@ -52,6 +52,11 @@ namespace lm {
 
     public:
 
+        size_t get_count() {
+            transaction transaction{*m_db, flag::transaction::rd_only};
+            return transaction.get_count();
+        }
+
         void put(const K &key, const V &value) {
             serializer<V> ser{m_columns};
 
