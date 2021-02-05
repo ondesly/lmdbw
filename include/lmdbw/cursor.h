@@ -57,6 +57,8 @@ namespace lm {
 
         cursor(const transaction &transaction, const lm::val &begin, const lm::val &end);
 
+        cursor(const cursor &) = delete;
+
         ~cursor();
 
     public:

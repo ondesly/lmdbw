@@ -45,6 +45,8 @@ namespace lm {
 
         explicit transaction(const db &db, uint32_t flags = 0);
 
+        transaction(const transaction &) = delete;
+
         ~transaction();
 
     public:
