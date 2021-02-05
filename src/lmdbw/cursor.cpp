@@ -84,7 +84,7 @@ lm::cursor::iterator &lm::cursor::iterator::operator++() {
 }
 
 bool lm::cursor::iterator::operator==(const lm::cursor::iterator &other) const {
-    return std::equal(m_key.data, m_key.data + m_key.size, other.m_key.data);
+    return std::equal(m_key.data, m_key.data + m_key.size, other.m_key.data, other.m_key.data + other.m_key.size);
 }
 
 bool lm::cursor::iterator::operator!=(const lm::cursor::iterator &other) const {
