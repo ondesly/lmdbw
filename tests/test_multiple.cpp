@@ -38,16 +38,27 @@ int main() {
 
     //
 
+    std::unordered_map<uint32_t, item> source_map;
+    for (size_t i = 0; i < keys.size(); ++i) {
+        source_map.emplace(keys[i], items[i]);
+    }
+
+    std::unordered_map<uint32_t, item> del_reference_map{{1000, source_map[1000]}};
+
+    std::unordered_map<uint32_t, item> get_reference_map = source_map;
+    get_reference_map.erase(100);
+    get_reference_map.erase(900);
+    get_reference_map.erase(1000);
+
+    //
+
+    //
+
     lm::dbw<uint32_t, item> db({"./db.db", lm::flag::env::no_subdir},
                                {"multiple", lm::flag::dbi::create | lm::flag::dbi::reverse_key}, {
                                        &item::w, &item::h, &item::data});
 
     // Put
-
-    std::unordered_map<uint32_t, item> source_map;
-    for (size_t i = 0; i < keys.size(); ++i) {
-        source_map.emplace(keys[i], items[i]);
-    }
 
     db.put(source_map);
 
@@ -55,11 +66,12 @@ int main() {
 
     const auto get_map = db.get(190, 850);
 
+    // Del
+
+    db.del(100, 900);
+    const auto del_map = db.get(0, 1000);
+
     //
 
-    source_map.erase(100);
-    source_map.erase(900);
-    source_map.erase(1000);
-
-    return (source_map == get_map) ? 0 : 1;
+    return (get_map == get_reference_map && del_map == del_reference_map) ? 0 : 1;
 }

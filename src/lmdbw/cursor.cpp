@@ -69,6 +69,12 @@ void lm::cursor::set(int option, const lm::val &key) {
     }
 }
 
+void lm::cursor::del() {
+    if (const int rc = mdb_cursor_del(m_cursor, 0)) {
+        throw lm::exception{"cursor::mdb_cursor_del", rc};
+    }
+}
+
 // -- iterator --
 
 lm::cursor::iterator::iterator(lm::cursor &cursor, const lm::val &key) : m_cursor(cursor), m_key(key) {}
@@ -81,6 +87,11 @@ lm::cursor::iterator &lm::cursor::iterator::operator++() {
     m_cursor.set(MDB_NEXT);
 
     return *this;
+}
+
+void lm::cursor::iterator::del() {
+    m_cursor.del();
+    m_cursor.set(MDB_GET_CURRENT);
 }
 
 bool lm::cursor::iterator::operator==(const lm::cursor::iterator &other) const {

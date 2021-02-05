@@ -112,6 +112,17 @@ namespace lm {
             transaction.del(k);
         }
 
+        void del(const K &begin, const K &end) {
+            transaction transaction{*m_db};
+            cursor cursor{transaction, encode_key(begin), encode_key(end)};
+
+            auto it = cursor.begin();
+            const auto it_end = cursor.end();
+            while (it != it_end) {
+                it.del();
+            }
+        }
+
     private:
 
         std::unique_ptr<lm::db> m_db;

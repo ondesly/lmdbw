@@ -40,6 +40,8 @@ namespace lm {
 
             iterator &operator++();
 
+            void del();
+
             bool operator==(const iterator &other) const;
 
             bool operator!=(const iterator &other) const;
@@ -76,6 +78,8 @@ namespace lm {
         void set(int option, const lm::val &key = {});
 
         lm::val specify_end_key(const lm::val &end);
+
+        void del();
 
     };
 
