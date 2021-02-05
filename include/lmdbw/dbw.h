@@ -16,29 +16,29 @@
 #include "lmdbw/serializer.h"
 #include "lmdbw/transaction.h"
 
-namespace {
-
-    template<class K>
-    lm::val encode_key(const K &key) {
-        return {reinterpret_cast<const uint8_t *>(&key), sizeof(K)};
-    }
-
-    template<class K>
-    K decode_key(const lm::val &key) {
-        return *reinterpret_cast<const K *>(key.data);
-    }
-
-    lm::val encode_key(const std::string &key) {
-        return {reinterpret_cast<const uint8_t *>(key.data()), key.size()};
-    }
-
-    std::string decode_key(const lm::val &key) {
-        return {key.data, key.data + key.size};
-    }
-
-}
-
 namespace lm {
+
+    namespace {
+
+        template<class K>
+        lm::val encode_key(const K &key) {
+            return {reinterpret_cast<const uint8_t *>(&key), sizeof(K)};
+        }
+
+        template<class K>
+        K decode_key(const lm::val &key) {
+            return *reinterpret_cast<const K *>(key.data);
+        }
+
+        lm::val encode_key(const std::string &key) {
+            return {reinterpret_cast<const uint8_t *>(key.data()), key.size()};
+        }
+
+        std::string decode_key(const lm::val &key) {
+            return {key.data, key.data + key.size};
+        }
+
+    }
 
     template<class K, class V>
     class dbw {
