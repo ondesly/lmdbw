@@ -42,10 +42,6 @@ namespace lm {
 
         explicit serializer(const std::vector<lm::column<T>> &columns) : m_columns(columns) {}
 
-        ~serializer() {
-            delete[] m_buffer;
-        }
-
     public:
 
         lm::val encode(const T &value) {
@@ -53,31 +49,31 @@ namespace lm {
         }
 
         lm::val encode_struct(const T &value) {
-            m_size = get_size(value);
-            m_buffer = new uint8_t[m_size];
+            auto size = get_size(value);
+            m_buffer = std::make_unique<uint8_t[]>(size);
 
             size_t index = 0;
             for (const auto &c : m_columns) {
                 switch (c.get_type()) {
                     case column<T>::type::uint8:
-                        copy(value.*(c.uint8_field()), m_buffer, index);
+                        copy(value.*(c.uint8_field()), m_buffer.get(), index);
                         break;
                     case column<T>::type::uint16:
-                        copy(value.*(c.uint16_field()), m_buffer, index);
+                        copy(value.*(c.uint16_field()), m_buffer.get(), index);
                         break;
                     case column<T>::type::uint32:
-                        copy(value.*(c.uint32_field()), m_buffer, index);
+                        copy(value.*(c.uint32_field()), m_buffer.get(), index);
                         break;
                     case column<T>::type::uint64:
-                        copy(value.*(c.uint64_field()), m_buffer, index);
+                        copy(value.*(c.uint64_field()), m_buffer.get(), index);
                         break;
                     case column<T>::type::vector:
-                        copy(value.*(c.vector_field()), m_buffer, index);
+                        copy(value.*(c.vector_field()), m_buffer.get(), index);
                         break;
                 }
             }
 
-            return {m_buffer, m_size};
+            return {m_buffer.get(), size};
         }
 
         lm::val encode_string(const std::string &value) {
@@ -127,8 +123,7 @@ namespace lm {
 
         const std::vector<lm::column<T>> &m_columns;
 
-        uint8_t *m_buffer = nullptr;
-        size_t m_size = 0;
+        std::unique_ptr<uint8_t[]> m_buffer;
 
     private:
 
