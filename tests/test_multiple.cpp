@@ -71,7 +71,12 @@ int main() {
     db.del(100, 900);
     const auto del_map = db.get(0, 1000);
 
+    // Del everything
+
+    db.del();
+    const size_t count = db.get_count();
+
     //
 
-    return (get_map == get_reference_map && del_map == del_reference_map) ? 0 : 1;
+    return (get_map == get_reference_map && del_map == del_reference_map && count == 0) ? 0 : 1;
 }

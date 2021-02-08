@@ -7,6 +7,7 @@
 //
 
 #include <algorithm>
+#include <cerrno>
 
 #include <liblmdb/lmdb.h>
 
@@ -22,22 +23,33 @@ lm::cursor::cursor(const lm::transaction &transaction, const lm::val &begin, con
 
     //
 
-    m_end_key = specify_end_key(end);
-
-    set(MDB_SET_RANGE, begin);
+    set_end(end);
+    set_begin(begin);
 }
 
-lm::val lm::cursor::specify_end_key(const lm::val &end) {
-    set(MDB_SET_RANGE, end);
-
-    auto current_key = to<MDB_val>(m_current.first);
-    auto end_key = to<MDB_val>(end);
-
-    if (mdb_cmp(m_transaction.get_transaction(), m_transaction.get_dbi(), &current_key, &end_key) == 0) {
-        set(MDB_NEXT);
+void lm::cursor::set_begin(const lm::val &begin) {
+    if (begin.size == 0) {
+        set(MDB_FIRST);
+    } else {
+        set(MDB_SET_RANGE, begin);
     }
+}
 
-    return val::copy(m_current.first);
+void lm::cursor::set_end(const lm::val &end) {
+    if (end.size == 0) {
+        m_end_key = {};
+    } else {
+        set(MDB_SET_RANGE, end);
+
+        auto current_key = to<MDB_val>(m_current.first);
+        auto end_key = to<MDB_val>(end);
+
+        if (mdb_cmp(m_transaction.get_transaction(), m_transaction.get_dbi(), &current_key, &end_key) == 0) {
+            set(MDB_NEXT);
+        }
+
+        m_end_key = val::copy(m_current.first);
+    }
 }
 
 lm::cursor::~cursor() {

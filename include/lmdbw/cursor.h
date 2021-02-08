@@ -55,7 +55,7 @@ namespace lm {
 
     public:
 
-        cursor(const transaction &transaction, const lm::val &begin, const lm::val &end);
+        explicit cursor(const transaction &transaction, const lm::val &begin = {}, const lm::val &end = {});
 
         cursor(const cursor &) = delete;
 
@@ -79,7 +79,9 @@ namespace lm {
 
         void set(int option, const lm::val &key = {});
 
-        lm::val specify_end_key(const lm::val &end);
+        void set_begin(const lm::val &begin);
+
+        void set_end(const lm::val &end);
 
         void del();
 

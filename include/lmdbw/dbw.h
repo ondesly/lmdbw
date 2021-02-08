@@ -112,9 +112,24 @@ namespace lm {
             transaction.del(k);
         }
 
+        void del() {
+            del(lm::val{}, lm::val{});
+        }
+
         void del(const K &begin, const K &end) {
+            del(encode_key(begin), encode_key(end));
+        }
+
+    private:
+
+        std::unique_ptr<lm::db> m_db;
+        std::vector<lm::column<V>> m_columns;
+
+    private:
+
+        void del(const lm::val &begin, const lm::val &end) {
             transaction transaction{*m_db};
-            cursor cursor{transaction, encode_key(begin), encode_key(end)};
+            cursor cursor{transaction, begin, end};
 
             auto it = cursor.begin();
             const auto it_end = cursor.end();
@@ -122,11 +137,6 @@ namespace lm {
                 it.del();
             }
         }
-
-    private:
-
-        std::unique_ptr<lm::db> m_db;
-        std::vector<lm::column<V>> m_columns;
 
     };
 
