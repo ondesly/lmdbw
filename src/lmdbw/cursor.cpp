@@ -59,7 +59,7 @@ void lm::cursor::set(int option, const lm::val &key) {
     MDB_val mdb_data;
 
     if (const int rc = mdb_cursor_get(m_cursor, &mdb_key, &mdb_data, MDB_cursor_op(option))) {
-        if (rc != MDB_NOTFOUND) {
+        if (rc != MDB_NOTFOUND && rc != EINVAL) {
             throw lm::exception{"cursor::mdb_cursor_get", rc};
         } else {
             m_current = {};
