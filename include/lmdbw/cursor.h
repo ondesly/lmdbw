@@ -22,13 +22,8 @@ namespace lm {
     class cursor {
     public:
 
-        class iterator {
-
-            using iterator_category = std::forward_iterator_tag;
-            using difference_type = std::ptrdiff_t;
-            using value_type = std::pair<lm::val, lm::val>;
-            using pointer = std::pair<lm::val, lm::val> *;
-            using reference = std::pair<lm::val, lm::val> &;
+        class iterator : public std::iterator<std::forward_iterator_tag, std::pair<lm::val, lm::val>, size_t,
+                const std::pair<lm::val, lm::val> *, std::pair<lm::val, lm::val> &> {
 
         public:
 
