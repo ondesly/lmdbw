@@ -72,3 +72,16 @@ set_target_properties(test_multithreading PROPERTIES
 target_link_libraries(test_multithreading lm::dbw)
 
 add_test(NAME TestMultithreading COMMAND test_multithreading)
+
+# TestPack
+
+add_executable(test_pack test_pack.cpp)
+
+set_target_properties(test_pack PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO)
+
+target_link_libraries(test_pack lm::dbw)
+
+add_test(NAME TestPack COMMAND test_pack)
