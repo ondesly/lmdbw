@@ -10,6 +10,7 @@
 
 #include <mutex>
 #include <string>
+#include <sys/stat.h>
 #include <unordered_map>
 
 struct MDB_env;
