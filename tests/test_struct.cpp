@@ -17,22 +17,23 @@ int main() {
         uint32_t u3;
         uint64_t u4;
         std::vector<uint8_t> v;
+        std::vector<uint32_t> v32;
 
         bool operator==(const item &i) const {
-            return u1 == i.u1 && u2 == i.u2 && u3 == i.u3 && u4 == i.u4 && v == i.v;
+            return u1 == i.u1 && u2 == i.u2 && u3 == i.u3 && u4 == i.u4 && v == i.v && v32 == i.v32;
         }
 
     };
 
     const uint32_t key_1 = 11;
-    const item item_1{4, 8, 16, 32, {'t', 'e', 's', 't', '_', 'd', 'a', 't', 'a', '_', '1'}};
-    const item item_2{40, 80, 160, 320, {'d', 'a', 't', 'a', '_', '2'}};
+    const item item_1{4, 8, 16, 32, {'t', 'e', 's', 't', '_', 'd', 'a', 't', 'a', '_', '1'}, {0xFF00FF00, 0xFFFF0000}};
+    const item item_2{40, 80, 160, 320, {'d', 'a', 't', 'a', '_', '2'}, {0xFF000000, 0xFFFFFF00}};
 
     //
 
     lm::dbw<uint32_t, item> db({"./db.db", lm::flag::env::no_subdir},
                                {"struct", lm::flag::dbi::create}, {
-                                       &item::u1, &item::u2, &item::u3, &item::u4, &item::v});
+                                       &item::u1, &item::u2, &item::u3, &item::u4, &item::v, &item::v32});
 
     // Create
 

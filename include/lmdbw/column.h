@@ -21,7 +21,8 @@ namespace lm {
             uint16,
             uint32,
             uint64,
-            vector
+            vector8,
+            vector32,
         };
 
     public:
@@ -34,7 +35,9 @@ namespace lm {
 
         column(uint64_t T::* u) : m_pointer(u), m_type(type::uint64) {}
 
-        column(std::vector<uint8_t> T::* v) : m_pointer(v), m_type(type::vector) {}
+        column(std::vector<uint8_t> T::* v) : m_pointer(v), m_type(type::vector8) {}
+
+        column(std::vector<uint32_t> T::* v) : m_pointer(v), m_type(type::vector32) {}
 
     public:
 
@@ -58,8 +61,12 @@ namespace lm {
             return m_pointer.u64;
         }
 
-        std::vector<uint8_t> T::* vector_field() const {
-            return m_pointer.v;
+        std::vector<uint8_t> T::* vector8_field() const {
+            return m_pointer.v8;
+        }
+
+        std::vector<uint32_t> T::* vector32_field() const {
+            return m_pointer.v32;
         }
 
     private:
@@ -70,17 +77,20 @@ namespace lm {
             uint16_t T::* u16;
             uint32_t T::* u32;
             uint64_t T::* u64;
-            std::vector<uint8_t> T::* v;
+            std::vector<uint8_t> T::* v8;
+            std::vector<uint32_t> T::* v32;
 
-            explicit pointer(uint8_t T::* u8) : u8(u8) {}
+            explicit pointer(uint8_t T::* u) : u8(u) {}
 
-            explicit pointer(uint16_t T::* u16) : u16(u16) {}
+            explicit pointer(uint16_t T::* u) : u16(u) {}
 
-            explicit pointer(uint32_t T::* u32) : u32(u32) {}
+            explicit pointer(uint32_t T::* u) : u32(u) {}
 
-            explicit pointer(uint64_t T::* u64) : u64(u64) {}
+            explicit pointer(uint64_t T::* u) : u64(u) {}
 
-            explicit pointer(std::vector<uint8_t> T::* v) : v(v) {}
+            explicit pointer(std::vector<uint8_t> T::* v) : v8(v) {}
+
+            explicit pointer(std::vector<uint32_t> T::* v) : v32(v) {}
 
         };
 
