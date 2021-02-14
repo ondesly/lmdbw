@@ -145,7 +145,7 @@ namespace lm {
             copy(vector_size, dst, index);
 
             std::copy_n(src.data(), vector_size, dst + index);
-            index += sizeof(vector_size);
+            index += vector_size;
         }
 
         inline void copy(const uint8_t *src, size_t &index, std::vector<uint8_t> &dst) {
@@ -154,7 +154,7 @@ namespace lm {
 
             dst.resize(vector_size);
             std::copy_n(src + index, vector_size, dst.data());
-            index += sizeof(vector_size);
+            index += vector_size;
         }
 
         inline size_t get_size(const T &value) {
