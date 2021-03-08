@@ -38,7 +38,7 @@ set(PUBLIC_HEADERS
         ../include/lmdbw/transaction.h
         ../include/lmdbw/val.h)
 
-install(TARGETS lmdbw lmdb
+install(TARGETS lmdbw
         EXPORT lmdbw-config
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
