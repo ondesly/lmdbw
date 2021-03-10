@@ -13,6 +13,18 @@ add_library(lmdbw STATIC
         lmdbw/db.cpp
         lmdbw/transaction.cpp)
 
+set(PUBLIC_HEADERS
+        include/lmdbw/column.h
+        include/lmdbw/cursor.h
+        include/lmdbw/db.h
+        include/lmdbw/dbw.h
+        include/lmdbw/exception.h
+        include/lmdbw/pack.h
+        include/lmdbw/serializer.h
+        include/lmdbw/transaction.h
+        include/lmdbw/val.h)
+
+set_target_properties(lmdbw PROPERTIES PUBLIC_HEADER "${PUBLIC_HEADERS}")
 
 target_link_libraries(lmdbw PRIVATE lmdb)
 
@@ -20,30 +32,4 @@ target_include_directories(lmdbw PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/../include>
         $<INSTALL_INTERFACE:include>)
 
-set_target_properties(lmdbw PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO)
-
-#
-
-set(PUBLIC_HEADERS
-        ../include/lmdbw/column.h
-        ../include/lmdbw/cursor.h
-        ../include/lmdbw/db.h
-        ../include/lmdbw/dbw.h
-        ../include/lmdbw/exception.h
-        ../include/lmdbw/serializer.h
-        ../include/lmdbw/transaction.h
-        ../include/lmdbw/val.h)
-
-install(TARGETS lmdbw lmdb
-        EXPORT lmdbw-config
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include)
-
-install(FILES ${PUBLIC_HEADERS} DESTINATION include/lmdbw)
-
-install(EXPORT lmdbw-config DESTINATION lib/cmake/lmdbw)
+set_target_properties(lmdbw PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS NO)
