@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -36,6 +37,8 @@ namespace {
 }
 
 namespace lm {
+
+    using vector_size_t = uint32_t;
 
     template<class T>
     class serializer {
@@ -148,7 +151,7 @@ namespace lm {
 
         template<class C>
         inline void copy(const std::vector<C> &src, uint8_t *dst, size_t &index) {
-            const size_t vector_size = src.size();
+            const auto vector_size = vector_size_t(src.size());
             copy(vector_size, dst, index);
 
             const auto ptr = reinterpret_cast<const uint8_t *>(src.data());
@@ -158,7 +161,7 @@ namespace lm {
 
         template<class C>
         inline void copy(const uint8_t *src, size_t &index, std::vector<C> &dst) {
-            size_t vector_size;
+            vector_size_t vector_size;
             copy(src, index, vector_size);
 
             dst.resize(vector_size);
@@ -186,10 +189,10 @@ namespace lm {
                         size += sizeof(uint64_t);
                         break;
                     case column<T>::type::vector8:
-                        size += sizeof(size_t) + (value.*(c.vector8_field())).size() * sizeof(uint8_t);
+                        size += sizeof(vector_size_t) + (value.*(c.vector8_field())).size() * sizeof(uint8_t);
                         break;
                     case column<T>::type::vector32:
-                        size += sizeof(size_t) + (value.*(c.vector32_field())).size() * sizeof(uint32_t);
+                        size += sizeof(vector_size_t) + (value.*(c.vector32_field())).size() * sizeof(uint32_t);
                         break;
                 }
             }
