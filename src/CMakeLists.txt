@@ -13,7 +13,6 @@ add_library(lmdbw STATIC
         lmdbw/db.cpp
         lmdbw/transaction.cpp)
 
-add_library(lm::dbw ALIAS lmdbw)
 
 target_link_libraries(lmdbw PRIVATE lmdb)
 

@@ -17,7 +17,7 @@ set_target_properties(test_crud PROPERTIES
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO)
 
-target_link_libraries(test_crud lm::dbw)
+target_link_libraries(test_crud dbw)
 
 add_test(NAME TestCRUD COMMAND test_crud)
 
@@ -30,7 +30,7 @@ set_target_properties(test_struct PROPERTIES
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO)
 
-target_link_libraries(test_struct lm::dbw)
+target_link_libraries(test_struct dbw)
 
 add_test(NAME TestStruct COMMAND test_struct)
 
@@ -43,7 +43,7 @@ set_target_properties(test_string PROPERTIES
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO)
 
-target_link_libraries(test_string lm::dbw)
+target_link_libraries(test_string dbw)
 
 add_test(NAME TestString COMMAND test_string)
 
@@ -56,7 +56,7 @@ set_target_properties(test_multiple PROPERTIES
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO)
 
-target_link_libraries(test_multiple lm::dbw)
+target_link_libraries(test_multiple dbw)
 
 add_test(NAME TestMultiple COMMAND test_multiple)
 
@@ -69,7 +69,7 @@ set_target_properties(test_multithreading PROPERTIES
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO)
 
-target_link_libraries(test_multithreading lm::dbw)
+target_link_libraries(test_multithreading dbw)
 
 add_test(NAME TestMultithreading COMMAND test_multithreading)
 
@@ -82,6 +82,6 @@ set_target_properties(test_pack PROPERTIES
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO)
 
-target_link_libraries(test_pack lm::dbw)
+target_link_libraries(test_pack dbw)
 
 add_test(NAME TestPack COMMAND test_pack)
