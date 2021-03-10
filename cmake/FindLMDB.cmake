@@ -13,19 +13,3 @@ add_library(lmdb STATIC
 target_include_directories(lmdb PUBLIC
         $<BUILD_INTERFACE:${lmdb_SOURCE_DIR}/libraries>
         $<INSTALL_INTERFACE:include>)
-
-#
-
-set(PUBLIC_HEADERS
-        ${lmdb_SOURCE_DIR}/libraries/liblmdb/lmdb.h)
-
-install(TARGETS lmdb
-        EXPORT lmdb-config
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include)
-
-install(FILES ${PUBLIC_HEADERS} DESTINATION include/liblmdb)
-
-install(EXPORT lmdb-config DESTINATION lib/cmake/lmdb)
