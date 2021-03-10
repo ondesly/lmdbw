@@ -8,80 +8,23 @@
 
 project(tests)
 
-# TestCRUD
+#
 
-add_executable(test_crud test_crud.cpp)
+function(add name)
+    add_executable(${name} ${name}.cpp)
 
-set_target_properties(test_crud PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO)
+    target_link_libraries(${name} lmdbw)
 
-target_link_libraries(test_crud dbw)
+    set_target_properties(${name} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED YES CXX_EXTENSIONS NO)
 
-add_test(NAME TestCRUD COMMAND test_crud)
+    add_test(NAME ${name} COMMAND ${name})
+endfunction()
 
-# TestStruct
+#
 
-add_executable(test_struct test_struct.cpp)
-
-set_target_properties(test_struct PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO)
-
-target_link_libraries(test_struct dbw)
-
-add_test(NAME TestStruct COMMAND test_struct)
-
-# TestString
-
-add_executable(test_string test_string.cpp)
-
-set_target_properties(test_string PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO)
-
-target_link_libraries(test_string dbw)
-
-add_test(NAME TestString COMMAND test_string)
-
-# TestMultiple
-
-add_executable(test_multiple test_multiple.cpp)
-
-set_target_properties(test_multiple PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO)
-
-target_link_libraries(test_multiple dbw)
-
-add_test(NAME TestMultiple COMMAND test_multiple)
-
-# TestMultithreading
-
-add_executable(test_multithreading test_multithreading.cpp)
-
-set_target_properties(test_multithreading PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO)
-
-target_link_libraries(test_multithreading dbw)
-
-add_test(NAME TestMultithreading COMMAND test_multithreading)
-
-# TestPack
-
-add_executable(test_pack test_pack.cpp)
-
-set_target_properties(test_pack PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO)
-
-target_link_libraries(test_pack dbw)
-
-add_test(NAME TestPack COMMAND test_pack)
+add("test_crud")
+add("test_struct")
+add("test_string")
+add("test_multiple")
+add("test_multithreading")
+add("test_pack")
