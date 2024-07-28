@@ -3,7 +3,7 @@
 //  lmdbw
 //
 //  Created by Dmitrii Torkhov <dmitriitorkhov@gmail.com> on 28.01.2021.
-//  Copyright © 2021 Dmitrii Torkhov. All rights reserved.
+//  Copyright © 2021-2024 Dmitrii Torkhov. All rights reserved.
 //
 
 #pragma once
@@ -66,7 +66,7 @@ namespace lm {
     private:
 
         const db &m_db;
-        MDB_txn *m_transaction;
+        MDB_txn *m_transaction = nullptr;
         uint32_t m_flags;
 
     };

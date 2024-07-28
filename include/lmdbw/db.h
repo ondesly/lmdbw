@@ -3,7 +3,7 @@
 //  lmdbw
 //
 //  Created by Dmitrii Torkhov <dmitriitorkhov@gmail.com> on 28.01.2021.
-//  Copyright © 2021 Dmitrii Torkhov. All rights reserved.
+//  Copyright © 2021-2024 Dmitrii Torkhov. All rights reserved.
 //
 
 #pragma once
@@ -49,6 +49,12 @@ namespace lm {
 
         }
 
+        namespace custom {
+
+            const int integer_64_key = 0x02; // Numeric keys in native byte order: unsigned int 64. the keys must all be of the same size.
+
+        }
+
     }
 
     class db {
@@ -65,6 +71,7 @@ namespace lm {
         struct dbi_params {
             std::string name;
             uint32_t flags;
+            uint32_t custom_flags{0};
         };
 
     public:
@@ -76,6 +83,8 @@ namespace lm {
         MDB_env *get_env() const;
 
         MDB_dbi get_dbi() const;
+
+        uint32_t get_custom_flags() const;
 
     private:
 
@@ -94,6 +103,7 @@ namespace lm {
 
         MDB_env *m_env = nullptr;
         MDB_dbi m_dbi = 0;
+        const uint32_t m_custom_flags;
 
     };
 

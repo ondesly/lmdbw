@@ -3,7 +3,7 @@
 //  lmdbw
 //
 //  Created by Dmitrii Torkhov <dmitriitorkhov@gmail.com> on 28.01.2021.
-//  Copyright © 2021 Dmitrii Torkhov. All rights reserved.
+//  Copyright © 2021-2024 Dmitrii Torkhov. All rights reserved.
 //
 
 #include <liblmdb/lmdb.h>
@@ -24,7 +24,7 @@ std::mutex lm::db::s_mutex;
 std::unordered_map<std::string, MDB_env *> lm::db::s_envs;
 std::unordered_map<std::string, MDB_dbi> lm::db::s_dbis;
 
-lm::db::db(const lm::db::env_params &env_params, const lm::db::dbi_params &dbi_params) {
+lm::db::db(const lm::db::env_params &env_params, const lm::db::dbi_params &dbi_params) : m_custom_flags(dbi_params.custom_flags) {
     const std::lock_guard<std::mutex> lock(s_mutex);
 
     // Environment
@@ -99,4 +99,8 @@ MDB_env *lm::db::get_env() const {
 
 MDB_dbi lm::db::get_dbi() const {
     return m_dbi;
+}
+
+uint32_t lm::db::get_custom_flags() const {
+    return m_custom_flags;
 }

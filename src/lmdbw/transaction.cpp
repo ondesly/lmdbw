@@ -3,7 +3,7 @@
 //  lmdbw
 //
 //  Created by Dmitrii Torkhov <dmitriitorkhov@gmail.com> on 28.01.2021.
-//  Copyright © 2021 Dmitrii Torkhov. All rights reserved.
+//  Copyright © 2021-2024 Dmitrii Torkhov. All rights reserved.
 //
 
 #include <liblmdb/lmdb.h>
@@ -12,9 +12,23 @@
 #include "lmdbw/exception.h"
 #include "lmdbw/transaction.h"
 
+namespace {
+
+    int compare_uint64(const MDB_val *a, const MDB_val *b) {
+        return (*reinterpret_cast<const uint64_t *>(a->mv_data) < *reinterpret_cast<const uint64_t *>(b->mv_data))
+            ? -1
+            : *reinterpret_cast<const uint64_t *>(a->mv_data) > *reinterpret_cast<const uint64_t *>(b->mv_data);
+    }
+
+}
+
 lm::transaction::transaction(const lm::db &db, uint32_t flags) : m_db(db), m_flags(flags) {
     if (const auto rc = mdb_txn_begin(m_db.get_env(), nullptr, m_flags, &m_transaction)) {
         throw lm::exception{"transaction::mdb_txn_begin", rc};
+    }
+
+    if (db.get_custom_flags() & flag::custom::integer_64_key) {
+        mdb_set_compare(m_transaction, m_db.get_dbi(), compare_uint64);
     }
 }
 
