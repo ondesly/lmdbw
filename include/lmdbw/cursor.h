@@ -3,7 +3,7 @@
 //  lmdbw
 //
 //  Created by Dmitrii Torkhov <dmitriitorkhov@gmail.com> on 03.02.2021.
-//  Copyright © 2021 Dmitrii Torkhov. All rights reserved.
+//  Copyright © 2021-2024 Dmitrii Torkhov. All rights reserved.
 //
 
 #pragma once
@@ -22,8 +22,13 @@ namespace lm {
     class cursor {
     public:
 
-        class iterator : public std::iterator<std::forward_iterator_tag, std::pair<lm::val, lm::val>, size_t,
-                const std::pair<lm::val, lm::val> *, std::pair<lm::val, lm::val> &> {
+        class iterator {
+        public:
+            using iterator_category = std::forward_iterator_tag;
+            using value_type = std::pair<lm::val, lm::val>;
+            using difference_type = size_t;
+            using pointer = const std::pair<lm::val, lm::val> *;
+            using reference = std::pair<lm::val, lm::val> &;
 
         public:
 
