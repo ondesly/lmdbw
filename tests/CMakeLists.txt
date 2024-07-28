@@ -3,7 +3,7 @@
 #  lmdbw
 #
 #  Created by Dmitrii Torkhov <dmitriitorkhov@gmail.com> on 28.01.2021.
-#  Copyright © 2021 Dmitrii Torkhov. All rights reserved.
+#  Copyright © 2021-2024 Dmitrii Torkhov. All rights reserved.
 #
 
 project(tests)
@@ -28,3 +28,4 @@ add("test_string")
 add("test_multiple")
 add("test_multithreading")
 add("test_pack")
+add("test_cursor")
