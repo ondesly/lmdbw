@@ -44,7 +44,7 @@ void lm::cursor::set_end(const lm::val &end) {
         auto current_key = to<MDB_val>(m_current.first);
         auto end_key = to<MDB_val>(end);
 
-        if (mdb_cmp(m_transaction.get_transaction(), m_transaction.get_dbi(), &current_key, &end_key) == 0) {
+        if (current_key.mv_data && mdb_cmp(m_transaction.get_transaction(), m_transaction.get_dbi(), &current_key, &end_key) == 0) {
             set(MDB_NEXT);
         }
 

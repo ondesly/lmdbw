@@ -13,6 +13,10 @@
 #include <lmdbw/db.h>
 #include <lmdbw/transaction.h>
 
+namespace {
+    lm::val to_val(const uint64_t &i) { return {reinterpret_cast<const uint8_t *>(&i), sizeof(i)}; }
+} // namespace
+
 int main() {
     { // No int64 key flag
         const lm::db db({"./db.db", lm::flag::env::no_subdir}, {"int64_key_default", lm::flag::dbi::create});
@@ -22,9 +26,9 @@ int main() {
         constexpr uint64_t key_value_1 = 0x00FF00;
         constexpr uint64_t key_value_2 = 0xFF0000;
 
-        transaction.put({reinterpret_cast<const uint8_t *>(&key_value_2), sizeof(key_value_2)}, {});
-        transaction.put({reinterpret_cast<const uint8_t *>(&key_value_0), sizeof(key_value_0)}, {});
-        transaction.put({reinterpret_cast<const uint8_t *>(&key_value_1), sizeof(key_value_1)}, {});
+        transaction.put(to_val(key_value_2), {});
+        transaction.put(to_val(key_value_0), {});
+        transaction.put(to_val(key_value_1), {});
         assert(transaction.get_count() == 3);
 
         std::vector<uint64_t> keys;
@@ -47,13 +51,16 @@ int main() {
         constexpr uint64_t key_value_1 = 0x00FF00;
         constexpr uint64_t key_value_2 = 0xFF0000;
 
-        transaction.put({reinterpret_cast<const uint8_t *>(&key_value_2), sizeof(key_value_2)}, {});
-        transaction.put({reinterpret_cast<const uint8_t *>(&key_value_0), sizeof(key_value_0)}, {});
-        transaction.put({reinterpret_cast<const uint8_t *>(&key_value_1), sizeof(key_value_1)}, {});
+        transaction.put(to_val(key_value_2), {});
+        transaction.put(to_val(key_value_0), {});
+        transaction.put(to_val(key_value_1), {});
         assert(transaction.get_count() == 3);
 
+        constexpr uint64_t key_value_begin = 0x000000;
+        constexpr uint64_t key_value_end = 0xFFFFFF;
+
         std::vector<uint64_t> keys;
-        for (const auto &[key, value] : lm::cursor{transaction}) {
+        for (const auto &[key, value] : lm::cursor{transaction, to_val(key_value_begin), to_val(key_value_end)}) {
             const auto key_64 = *reinterpret_cast<const uint64_t *>(key.data);
             keys.push_back(key_64);
         }
