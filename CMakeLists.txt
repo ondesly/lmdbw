@@ -27,7 +27,7 @@ include(FetchContent)
 FetchContent_Declare(
         lmdb
         GIT_REPOSITORY https://github.com/LMDB/lmdb.git
-        GIT_TAG LMDB_0.9.24
+        GIT_TAG LMDB_0.9.31
         GIT_SHALLOW TRUE
         GIT_PROGRESS TRUE)
 
